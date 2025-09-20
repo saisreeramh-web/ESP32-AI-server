@@ -6,16 +6,15 @@ app = Flask(__name__)
 
 @app.route("/upload", methods=["POST"])
 def upload():
-    data = request.data
-    print("Received bytes:", len(data))
+    audio_bytes = request.data
+    print(f"Received {len(audio_bytes)} bytes")
 
-    # Convert bytes to WAV in memory
-    audio_file = io.BytesIO(data)
-    r = sr.Recognizer()
+    audio_file = io.BytesIO(audio_bytes)
+    recognizer = sr.Recognizer()
     try:
         with sr.AudioFile(audio_file) as source:
-            audio = r.record(source)
-            text = r.recognize_google(audio)
+            audio = recognizer.record(source)
+            text = recognizer.recognize_google(audio)
         return jsonify({"text": text})
     except Exception as e:
         print("Error:", e)
